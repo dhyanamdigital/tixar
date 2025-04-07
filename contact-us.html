@@ -15,6 +15,13 @@
     <link href="css/webflow.css" rel="stylesheet" type="text/css" />
     <link href="css/tixar.webflow.css" rel="stylesheet" type="text/css" />
     <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <style>
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
     <link
       href="https://fonts.gstatic.com"
       rel="preconnect"
@@ -787,17 +794,31 @@
                     id="email-2"
                     required=""
                   /><button
-                  type="submit"
-                  class="contact-form-button w-button"
-                  id="submit-btn"
-                  style="position: relative; display: flex; align-items: center; justify-content: center; gap: 8px;"
-                >
-                  <span id="submit-text">Send message</span>
-                  <div
-                    id="submit-loader"
-                    style="display: none; width: 16px; height: 16px; border: 2px solid #fff; border-top: 2px solid transparent; border-radius: 50%; animation: spin 0.8s linear infinite;"
-                  ></div>
-                </button>
+                    type="submit"
+                    class="contact-form-button w-button"
+                    id="submit-btn"
+                    style="
+                      position: relative;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      gap: 8px;
+                    "
+                  >
+                    <span id="submit-text">Send message</span>
+                    <div
+                      id="submit-loader"
+                      style="
+                        display: none;
+                        width: 16px;
+                        height: 16px;
+                        border: 2px solid #fff;
+                        border-top: 2px solid transparent;
+                        border-radius: 50%;
+                        animation: spin 0.8s linear infinite;
+                      "
+                    ></div>
+                  </button>
                 </form>
                 <div class="w-form-done">
                   <div>Thank you! Your submission has been received!</div>
@@ -836,62 +857,75 @@
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const form = document.getElementById("email-form");
-    
+        const submitBtn = document.getElementById("submit-btn");
+        const submitText = document.getElementById("submit-text");
+        const submitLoader = document.getElementById("submit-loader");
+
         form.addEventListener("submit", async function (event) {
-          event.preventDefault(); // Prevent default form submission
+          event.preventDefault();
           console.log("Form submission started.");
-    
+
           const formData = new FormData(form);
           const firstName = formData.get("First-Name").trim();
           const lastName = formData.get("Last-Name").trim();
           const email = formData.get("email").trim();
           const phone = formData.get("Phone").trim();
           const message = formData.get("field").trim();
-    
-          // Phone validation: only digits and exactly 10 numbers
+
           const phoneRegex = /^\d{10}$/;
           if (!phoneRegex.test(phone)) {
             alert("Please enter a valid 10-digit phone number.");
             return;
           }
-    
+
           const jsonData = {
             Name: firstName + " " + lastName,
             Email: email,
             Phone: phone,
             Message: message,
           };
-    
-          console.log("Collected form data:", jsonData);
-    
+
+          // Show loader inside button
+          submitText.style.display = "none";
+          submitLoader.style.display = "inline-block";
+          submitBtn.disabled = true;
+
           try {
-            const response = await fetch("https://tixarbe.tixar.in/api/contactus/getContactUsDetails", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(jsonData),
-            });
-    
-            console.log("Fetch response status:", response.status);
-    
+            const response = await fetch(
+              "https://tixarbe.tixar.in/api/contactus/getContactUsDetails",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(jsonData),
+              }
+            );
+
             const responseData = await response.json().catch(() => ({}));
-            console.log("Response data:", responseData);
-    
+            console.log("Response:", responseData);
+
             if (response.ok) {
               console.log("Submission successful. Redirecting...");
               window.location.href = "https://tixar.in/thank-you";
             } else {
               alert("Something went wrong. Please try again.");
+              submitText.style.display = "inline";
+              submitLoader.style.display = "none";
+              submitBtn.disabled = false;
             }
           } catch (error) {
             console.error("Error submitting the form:", error);
-            alert("Error submitting the form. Check the console for more info.");
+            alert(
+              "Error submitting the form. Check the console for more info."
+            );
+            submitText.style.display = "inline";
+            submitLoader.style.display = "none";
+            submitBtn.disabled = false;
           }
         });
       });
     </script>
-    
 
     <script
       src="https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.5.1.min.dc5e7f18c8.js?site=67b0a569ac5c50c9f7054fcb"
