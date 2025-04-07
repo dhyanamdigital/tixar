@@ -786,12 +786,18 @@
                     type="email"
                     id="email-2"
                     required=""
-                  /><input
-                    type="submit"
-                    data-wait="Please wait..."
-                    class="blue-button w-button"
-                    value="Subscribe"
-                  />
+                  /><button
+                  type="submit"
+                  class="contact-form-button w-button"
+                  id="submit-btn"
+                  style="position: relative; display: flex; align-items: center; justify-content: center; gap: 8px;"
+                >
+                  <span id="submit-text">Send message</span>
+                  <div
+                    id="submit-loader"
+                    style="display: none; width: 16px; height: 16px; border: 2px solid #fff; border-top: 2px solid transparent; border-radius: 50%; animation: spin 0.8s linear infinite;"
+                  ></div>
+                </button>
                 </form>
                 <div class="w-form-done">
                   <div>Thank you! Your submission has been received!</div>
